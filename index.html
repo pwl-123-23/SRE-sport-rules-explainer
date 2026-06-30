@@ -20,65 +20,13 @@
         </div>
       </div>
       <nav class="topnav" aria-label="主导航">
-        <button class="nav-button is-active" type="button" data-view="library">规则库</button>
-        <button class="nav-button" type="button" data-view="records">学习记录</button>
+        <a class="nav-button" href="#/">规则首页</a>
+        <a class="nav-button" href="#/category/all">规则库</a>
+        <a class="nav-button" href="#/records">学习记录</a>
       </nav>
     </header>
 
-    <main class="layout">
-      <aside class="sidebar" aria-label="筛选区">
-        <label class="search-box">
-          <span>搜索项目</span>
-          <input id="search-input" type="search" placeholder="足球、跳水、短道速滑..." />
-        </label>
-
-        <section class="filter-block">
-          <div class="section-title">
-            <h2>赛事分类</h2>
-            <span id="total-count">44项</span>
-          </div>
-          <div id="category-list" class="category-list"></div>
-        </section>
-
-        <section class="brief-panel">
-          <h2>学习框架</h2>
-          <ol>
-            <li>看场地与器材</li>
-            <li>看赛制与得分</li>
-            <li>看犯规与观赛重点</li>
-          </ol>
-        </section>
-      </aside>
-
-      <section id="library-view" class="content-view">
-        <div class="content-head">
-          <div>
-            <p class="eyebrow">赛事规则库</p>
-            <h2 id="result-title">全部项目</h2>
-          </div>
-          <div class="result-meta">
-            <span id="result-count">44</span>
-            <span>个项目</span>
-          </div>
-        </div>
-        <div id="sport-grid" class="sport-grid"></div>
-      </section>
-
-      <section id="records-view" class="content-view is-hidden">
-        <div class="content-head">
-          <div>
-            <p class="eyebrow">本地记录</p>
-            <h2>学习记录</h2>
-          </div>
-          <button id="clear-records" class="ghost-button" type="button">清空记录</button>
-        </div>
-        <div id="records-list" class="records-list"></div>
-      </section>
-    </main>
-
-    <dialog id="rule-dialog" class="rule-dialog">
-      <div id="dialog-content"></div>
-    </dialog>
+    <main id="app" class="app-shell"></main>
 
     <script src="./src/data/sports.js"></script>
     <script src="./src/app.js"></script>
