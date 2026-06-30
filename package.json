@@ -1,0 +1,10 @@
+{
+  "name": "sre-sport-rules-explainer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "体育赛事规则学习 APP 静态 Demo",
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "validate": "node scripts/validate-data.mjs"
+  }
+}

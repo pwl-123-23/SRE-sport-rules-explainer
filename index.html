@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="体育赛事规则学习 APP Demo，按七大赛事类别展示规则、场地、得分和判罚。"
+    />
+    <title>体育赛事规则学习 APP</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">竞</span>
+        <div>
+          <p>体育赛事规则 APP</p>
+          <h1>规则学习库</h1>
+        </div>
+      </div>
+      <nav class="topnav" aria-label="主导航">
+        <button class="nav-button is-active" type="button" data-view="library">规则库</button>
+        <button class="nav-button" type="button" data-view="records">学习记录</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar" aria-label="筛选区">
+        <label class="search-box">
+          <span>搜索项目</span>
+          <input id="search-input" type="search" placeholder="足球、跳水、短道速滑..." />
+        </label>
+
+        <section class="filter-block">
+          <div class="section-title">
+            <h2>赛事分类</h2>
+            <span id="total-count">44项</span>
+          </div>
+          <div id="category-list" class="category-list"></div>
+        </section>
+
+        <section class="brief-panel">
+          <h2>学习框架</h2>
+          <ol>
+            <li>看场地与器材</li>
+            <li>看赛制与得分</li>
+            <li>看犯规与观赛重点</li>
+          </ol>
+        </section>
+      </aside>
+
+      <section id="library-view" class="content-view">
+        <div class="content-head">
+          <div>
+            <p class="eyebrow">赛事规则库</p>
+            <h2 id="result-title">全部项目</h2>
+          </div>
+          <div class="result-meta">
+            <span id="result-count">44</span>
+            <span>个项目</span>
+          </div>
+        </div>
+        <div id="sport-grid" class="sport-grid"></div>
+      </section>
+
+      <section id="records-view" class="content-view is-hidden">
+        <div class="content-head">
+          <div>
+            <p class="eyebrow">本地记录</p>
+            <h2>学习记录</h2>
+          </div>
+          <button id="clear-records" class="ghost-button" type="button">清空记录</button>
+        </div>
+        <div id="records-list" class="records-list"></div>
+      </section>
+    </main>
+
+    <dialog id="rule-dialog" class="rule-dialog">
+      <div id="dialog-content"></div>
+    </dialog>
+
+    <script src="./src/data/sports.js"></script>
+    <script src="./src/app.js"></script>
+  </body>
+</html>

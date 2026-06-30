@@ -1,2 +1,59 @@
-# SRE-sport-rules-explainer
-A fast and intuitive sports rules guide platform. Instantly understand how different sports are played, including scoring systems, basic rules, and competition formats. Built for quick learning, social sharing, and integration into sports apps and media platforms.
+# SRE 体育赛事规则学习 APP
+
+这是一个独立的体育赛事规则 APP 静态 Demo，不会改动原来的银发经济平台。当前版本按用户指定的七大类组织赛事项目，并提供二维示意图、规则卡、大字模式和本地学习记录。
+
+## 分类范围
+
+- 球类赛事：足球、篮球、排球、网球、羽毛球、乒乓球、手球、棒球
+- 田径类：短跑、中长跑、跨栏、接力、跳远、跳高、铅球、标枪、马拉松
+- 水上类：游泳、跳水、水球、花样游泳、赛艇、皮划艇
+- 冰雪类：滑雪、滑冰、冰球、雪车、雪橇、冰壶
+- 格斗类：拳击、柔道、跆拳道、摔跤、击剑
+- 技巧评分类：体操、艺术体操、跳水、自由式滑雪、花滑
+- 竞速类：自行车、赛车、短道速滑、速度滑冰、赛艇
+
+说明：跳水、赛艇在不同大类中有不同学习视角，因此按分类条目重复出现。当前数据共 44 个分类条目。
+
+## 功能
+
+- 按七大类筛选项目
+- 搜索中文名、英文名和规则关键词
+- 查看赛制、场地、得分、犯规、观赛重点
+- 二维场地、赛道、水域、冰面、拳台等示意图
+- 规则弹窗大字模式
+- 使用 `localStorage` 保存学习记录
+
+## 运行
+
+直接打开 `index.html` 即可使用。也可以启动本地服务：
+
+```bash
+npm run start
+```
+
+然后访问：
+
+```text
+http://localhost:4173
+```
+
+校验规则数据：
+
+```bash
+npm run validate
+```
+
+## GitHub 新仓库建议
+
+- 仓库名：`SRE-sport-rules-explainer`
+- 描述：`体育赛事规则学习 APP，按七大类展示赛制、场地、得分和判罚`
+- 可见性：如果只是课程/个人项目，建议先设为 private；如果要展示作品集，可设为 public
+- GitHub Pages：可以直接发布根目录静态站点
+
+## 后续升级
+
+- 使用 Three.js 做三维场馆和球路动画
+- 增加语音朗读、慢速动画和无障碍字号设置
+- 接入官方规则版本号和来源链接
+- 增加规则问答、错题复习和赛事案例
+- 迁移为微信小程序或移动端 App
