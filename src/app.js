@@ -142,7 +142,194 @@ function sampleSports(categoryId) {
 
 function buildCanvaPrompt(sport) {
   const category = categoryById.get(sport.category);
-  return `为体育赛事规则APP设计一张${sport.title}赛事图卡，16:9横版，中文标题“${sport.title}”，小标签“${category?.label ?? sport.category}”，画面突出${sport.venue}，加入规则关键词：赛制、得分、常见判罚。风格：清晰教育型、扁平矢量、色彩明快、适合小程序和网页卡片，避免复杂背景和密集文字。`;
+  return `为体育赛事规则APP设计一张${sport.title}赛事封面图，16:9横版，中文标题“${sport.title}”，小标签“${category?.label ?? sport.category}”，画面突出${sport.venue}，加入规则关键词：赛制、得分、常见判罚。风格：真实场馆感、器材主体明显、灯光强烈、适合小程序和网页卡片，避免课程感和密集文字。`;
+}
+
+function categoryCoverConfig(categoryId) {
+  const covers = {
+    ball: {
+      title: "球类赛事",
+      subtitle: "球门 / 篮筐 / 隔网 / 击球",
+      scene: "soccer-net",
+      prompt: "足球入网特写、明亮体育场灯光、绿色草皮，旁边有篮球和排球的运动氛围。",
+    },
+    track: {
+      title: "田径类",
+      subtitle: "起跑 / 跨栏 / 跳投 / 路跑",
+      scene: "track",
+      prompt: "红色田径跑道、起跑器、跨栏、终点线和速度拖影。",
+    },
+    aquatic: {
+      title: "水上类",
+      subtitle: "泳池 / 跳台 / 水球 / 航道",
+      scene: "water",
+      prompt: "蓝色泳池水面、泳道线、跳台、赛艇水道和强烈水光反射。",
+    },
+    winter: {
+      title: "冰雪类",
+      subtitle: "雪道 / 冰面 / 冰球 / 冰壶",
+      scene: "winter",
+      prompt: "雪道和冰场融合、滑雪板、冰球、冷色聚光灯和速度感。",
+    },
+    combat: {
+      title: "格斗类",
+      subtitle: "拳台 / 榻榻米 / 剑道 / 护具",
+      scene: "combat",
+      prompt: "拳台聚光灯、拳套、柔道垫、击剑道，突出对抗气氛。",
+    },
+    judged: {
+      title: "技巧评分类",
+      subtitle: "体操 / 花滑 / 跳水 / 自由式滑雪",
+      scene: "stage",
+      prompt: "体操赛台、花滑冰面、聚光灯和优雅动作轨迹。",
+    },
+    racing: {
+      title: "竞速类",
+      subtitle: "赛道 / 自行车 / 冰道 / 航道",
+      scene: "racing",
+      prompt: "赛车场弯道、自行车轮、短道速滑速度线和冲刺终点。",
+    },
+  };
+
+  return covers[categoryId] ?? {
+    title: "全部项目",
+    subtitle: "44 个赛事规则入口",
+    scene: "all",
+    prompt: "多项体育器材在大型体育场内组成赛事入口封面。",
+  };
+}
+
+function renderCategoryCover(category) {
+  const config = categoryCoverConfig(category.id);
+  const color = escapeHtml(category.color);
+  const title = escapeHtml(config.title);
+  const subtitle = escapeHtml(config.subtitle);
+  const prompt = escapeHtml(config.prompt);
+  const scene = renderCategoryScene(config.scene, color);
+
+  return `
+    <svg class="category-cover-svg" viewBox="0 0 720 405" role="img" aria-label="${title}封面图">
+      <title>${title}封面图</title>
+      <defs>
+        <radialGradient id="glow-${escapeHtml(category.id)}" cx="70%" cy="18%" r="62%">
+          <stop offset="0" stop-color="#ffffff" stop-opacity=".86" />
+          <stop offset=".34" stop-color="${color}" stop-opacity=".36" />
+          <stop offset="1" stop-color="#07111f" stop-opacity=".98" />
+        </radialGradient>
+        <linearGradient id="shade-${escapeHtml(category.id)}" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#07111f" stop-opacity=".05" />
+          <stop offset=".56" stop-color="#07111f" stop-opacity=".18" />
+          <stop offset="1" stop-color="#07111f" stop-opacity=".82" />
+        </linearGradient>
+      </defs>
+      <rect width="720" height="405" rx="26" fill="#07111f" />
+      <rect width="720" height="405" rx="26" fill="url(#glow-${escapeHtml(category.id)})" />
+      ${scene}
+      <rect width="720" height="405" rx="26" fill="url(#shade-${escapeHtml(category.id)})" />
+      <g transform="translate(38 275)">
+        <rect width="132" height="34" rx="17" fill="#ffffff" opacity=".18" />
+        <text x="66" y="23" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="900">${subtitle}</text>
+        <text x="0" y="82" fill="#ffffff" font-size="52" font-weight="900">${title}</text>
+      </g>
+      <text x="38" y="48" fill="#ffffff" opacity=".72" font-size="16" font-weight="800">SPORT CATEGORY</text>
+      <desc>${prompt}</desc>
+    </svg>
+  `;
+}
+
+function renderCategoryScene(scene, color) {
+  if (scene === "soccer-net") {
+    return `
+      <rect x="0" y="235" width="720" height="170" fill="#24a148" />
+      <path d="M0 310h720M0 357h720M60 238l-48 167M145 238 98 405M232 238l-48 167M318 238l-48 167M405 238l-48 167M492 238l-48 167M580 238l-48 167M666 238l-48 167" stroke="#b7f7c5" stroke-width="3" opacity=".45" />
+      <path d="M20 0v405M20 30h248M20 74h236M20 118h222M20 162h210M20 206h194M20 250h178M20 294h162M20 338h146M20 382h130" stroke="#fff" stroke-width="6" opacity=".72" />
+      <path d="M20 0l210 405M78 0l210 405M136 0l210 405M194 0l210 405" stroke="#fff" stroke-width="4" opacity=".5" />
+      <circle cx="210" cy="170" r="78" fill="#f8fafc" />
+      <path d="M210 96 244 121 231 161h-42l-13-40zM161 164l28-3 18 34-22 28-39-13zM259 164l-28-3-18 34 22 28 39-13zM190 238l20-31 20 31-20 20z" fill="#111827" opacity=".9" />
+      <circle cx="210" cy="170" r="80" fill="none" stroke="#e2e8f0" stroke-width="8" />
+      <circle cx="520" cy="95" r="16" fill="#7dd3fc" opacity=".75" />
+      <circle cx="610" cy="70" r="20" fill="#bef264" opacity=".75" />
+    `;
+  }
+
+  if (scene === "track") {
+    return `
+      <path d="M-30 338C120 205 318 170 752 175" fill="none" stroke="#b91c1c" stroke-width="142" />
+      <path d="M-30 338C120 205 318 170 752 175" fill="none" stroke="#f97316" stroke-width="94" />
+      <path d="M-30 338C120 205 318 170 752 175" fill="none" stroke="#fff7ed" stroke-width="4" stroke-dasharray="28 26" opacity=".95" />
+      <path d="M96 312h90M132 282h80M168 254h76" stroke="#111827" stroke-width="12" stroke-linecap="round" opacity=".42" />
+      <rect x="455" y="120" width="24" height="160" fill="#f8fafc" opacity=".88" />
+      <rect x="530" y="105" width="24" height="170" fill="#f8fafc" opacity=".88" />
+      <rect x="605" y="92" width="24" height="178" fill="#f8fafc" opacity=".88" />
+      <circle cx="335" cy="188" r="26" fill="${color}" />
+      <path d="M322 215c52 10 85 8 123-19" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".9" />
+    `;
+  }
+
+  if (scene === "water") {
+    return `
+      <rect x="0" y="120" width="720" height="285" fill="#0284c7" />
+      <path d="M0 164c80 30 136-30 216 0s136 30 216 0 136-30 288 0M0 230c80 30 136-30 216 0s136 30 216 0 136-30 288 0M0 296c80 30 136-30 216 0s136 30 216 0 136-30 288 0" fill="none" stroke="#e0f2fe" stroke-width="10" opacity=".72" />
+      <path d="M110 72h245" stroke="#e5e7eb" stroke-width="20" stroke-linecap="round" />
+      <path d="M130 88v138" stroke="#e5e7eb" stroke-width="16" />
+      <circle cx="455" cy="186" r="48" fill="#f8fafc" opacity=".9" />
+      <path d="M488 250h150" stroke="#f8fafc" stroke-width="14" stroke-linecap="round" opacity=".8" />
+      <path d="M505 250l108-54" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" opacity=".9" />
+    `;
+  }
+
+  if (scene === "winter") {
+    return `
+      <path d="M-20 334 190 92 370 222 530 42 745 405H-20z" fill="#f8fafc" opacity=".95" />
+      <path d="M356 92C258 172 204 256 170 405" fill="none" stroke="#93c5fd" stroke-width="34" stroke-linecap="round" opacity=".75" />
+      <path d="M388 104C292 196 242 280 214 405" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".9" />
+      <circle cx="548" cy="232" r="50" fill="#f8fafc" stroke="#60a5fa" stroke-width="8" />
+      <circle cx="548" cy="232" r="20" fill="#111827" opacity=".72" />
+      <path d="M450 320h160" stroke="${color}" stroke-width="14" stroke-linecap="round" />
+    `;
+  }
+
+  if (scene === "combat") {
+    return `
+      <rect x="74" y="128" width="572" height="196" rx="12" fill="#f8fafc" opacity=".95" />
+      <rect x="106" y="160" width="508" height="132" rx="66" fill="#fee2e2" opacity=".88" />
+      <path d="M100 128v-44M620 128v-44M100 324v44M620 324v44" stroke="#e5e7eb" stroke-width="16" stroke-linecap="round" />
+      <path d="M96 98h528M96 126h528M96 154h528" stroke="#f8fafc" stroke-width="8" opacity=".8" />
+      <circle cx="282" cy="228" r="52" fill="${color}" />
+      <circle cx="408" cy="228" r="52" fill="#2563eb" />
+      <path d="M300 228h90" stroke="#111827" stroke-width="10" opacity=".25" stroke-linecap="round" />
+      <path d="M300 30 224 128M420 24l86 104" stroke="#fde68a" stroke-width="18" stroke-linecap="round" opacity=".72" />
+    `;
+  }
+
+  if (scene === "stage") {
+    return `
+      <rect x="76" y="122" width="568" height="206" rx="22" fill="#fdf4ff" opacity=".95" />
+      <path d="M132 292c90-176 194-176 300 0" fill="none" stroke="${color}" stroke-width="18" stroke-linecap="round" />
+      <circle cx="282" cy="150" r="48" fill="#f0abfc" opacity=".92" />
+      <path d="M402 76c70 58 118 132 144 236" fill="none" stroke="#93c5fd" stroke-width="12" stroke-linecap="round" opacity=".86" />
+      <path d="M480 318h122" stroke="#f8fafc" stroke-width="15" stroke-linecap="round" />
+      <circle cx="530" cy="286" r="16" fill="#ffffff" opacity=".92" />
+      <path d="M198 32 260 126M506 28 444 126" stroke="#fff7ed" stroke-width="16" stroke-linecap="round" opacity=".72" />
+    `;
+  }
+
+  if (scene === "racing") {
+    return `
+      <path d="M-40 320C92 96 252 68 412 152c110 58 200 42 346-96" fill="none" stroke="#111827" stroke-width="118" stroke-linecap="round" />
+      <path d="M-40 320C92 96 252 68 412 152c110 58 200 42 346-96" fill="none" stroke="#f8fafc" stroke-width="6" stroke-dasharray="30 30" opacity=".86" />
+      <circle cx="256" cy="208" r="68" fill="none" stroke="${color}" stroke-width="16" opacity=".9" />
+      <circle cx="432" cy="208" r="68" fill="none" stroke="#f8fafc" stroke-width="16" opacity=".9" />
+      <path d="M256 208h176l-82-92zM350 116l-38 92" fill="none" stroke="#f8fafc" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M86 92h160M78 132h112M532 306h126M548 338h86" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity=".38" />
+    `;
+  }
+
+  return `
+    <circle cx="240" cy="190" r="92" fill="${color}" opacity=".55" />
+    <circle cx="420" cy="172" r="72" fill="#ffffff" opacity=".32" />
+    <path d="M100 320h520" stroke="#ffffff" stroke-width="12" stroke-linecap="round" opacity=".45" />
+  `;
 }
 
 function renderSportPoster(sport) {
@@ -258,13 +445,13 @@ function renderHomePage() {
   app.innerHTML = `
     <section class="category-dashboard">
       <div class="dashboard-copy">
-        <p class="eyebrow">SPORT RULES EXPLAINER</p>
-        <h2>先选赛事大类，再进入项目规则</h2>
-        <p>每个类别都可以点开查看细分项目，每个项目都有赛事图卡、赛制、场地器材、得分胜负、常见判罚和观赛重点。</p>
+        <p class="eyebrow">SPORTS GUIDE</p>
+        <h2>赛事大类一眼进入</h2>
+        <p>用大场景封面区分七类赛事，先看项目，再查赛制、场地、得分和判罚。</p>
         <div class="hero-stats">
           <span><b>7</b>大类</span>
           <span><b>44</b>项目</span>
-          <span><b>5</b>规则维度</span>
+          <span><b>16:9</b>封面图</span>
         </div>
       </div>
       <div class="category-grid category-grid-primary">
@@ -276,7 +463,7 @@ function renderHomePage() {
       <div class="section-head">
         <div>
           <p class="eyebrow">推荐项目</p>
-          <h2>先看这些赛事图卡</h2>
+          <h2>热门赛事入口</h2>
         </div>
         <a class="text-link" href="#/category/all">全部项目</a>
       </div>
@@ -288,10 +475,10 @@ function renderHomePage() {
     <section class="section-block">
       <div class="section-head">
         <div>
-          <p class="eyebrow">学习记录</p>
-          <h2>复习已经保存的项目</h2>
+          <p class="eyebrow">收藏夹</p>
+          <h2>回看保存过的项目</h2>
         </div>
-        <a class="primary-link" href="#/records">查看学习记录</a>
+        <a class="primary-link" href="#/records">查看收藏夹</a>
       </div>
     </section>
   `;
@@ -302,7 +489,7 @@ function renderCategoryCard(category) {
 
   return `
     <a class="category-card" href="#/category/${escapeHtml(category.id)}">
-      <span class="category-bar" style="background:${escapeHtml(category.color)}"></span>
+      <span class="category-cover">${renderCategoryCover(category)}</span>
       <span class="category-card-main">
         <b>${escapeHtml(category.label)}</b>
         <small>${escapeHtml(category.description)}</small>
@@ -334,11 +521,11 @@ function renderCategoryPage(categoryId) {
           </div>
         </section>
         <section class="brief-panel">
-          <h2>学习框架</h2>
+          <h2>规则看点</h2>
           <ol>
-            <li>进入分类页选择项目</li>
-            <li>打开详情页看完整规则</li>
-            <li>加入学习记录继续复习</li>
+            <li>先看场地与器材</li>
+            <li>再看赛制与得分</li>
+            <li>最后看犯规和观赛重点</li>
           </ol>
         </section>
       </aside>
@@ -424,7 +611,7 @@ function renderSportPage(sportId) {
       <aside class="detail-side">
         <a class="text-link" href="#/category/${escapeHtml(sport.category)}">返回${escapeHtml(category?.label ?? "分类")}</a>
         <div class="detail-visual">${renderSportPoster(sport)}</div>
-        <button class="primary-button" type="button" data-save="${escapeHtml(sport.id)}">加入学习记录</button>
+        <button class="primary-button" type="button" data-save="${escapeHtml(sport.id)}">收藏赛事</button>
         <label class="toggle-row">
           <span>大字模式</span>
           <input type="checkbox" data-large-text />
@@ -451,7 +638,7 @@ function renderSportPage(sportId) {
           <div class="section-head">
             <div>
               <p class="eyebrow">同类项目</p>
-              <h2>继续学习${escapeHtml(category?.label ?? "")}</h2>
+              <h2>继续探索${escapeHtml(category?.label ?? "")}</h2>
             </div>
           </div>
           <div class="compact-grid">
@@ -490,7 +677,7 @@ function renderRecordsPage() {
       <div class="content-head">
         <div>
           <p class="eyebrow">本地记录</p>
-          <h2>学习记录</h2>
+          <h2>收藏夹</h2>
         </div>
         ${records.length ? '<button class="ghost-button" type="button" data-clear-records>清空记录</button>' : ""}
       </div>
@@ -503,7 +690,7 @@ function renderRecordsPage() {
 
 function renderRecordCard(record) {
   const category = categoryById.get(record.category);
-  const status = record.status === "mastered" ? "已掌握" : "学习中";
+  const status = record.status === "mastered" ? "已看完" : "已收藏";
 
   return `
     <article class="record-card">
@@ -516,8 +703,8 @@ function renderRecordCard(record) {
       <p>官方规则线索：${escapeHtml(record.source)}</p>
       <div class="record-actions">
         <a class="primary-link" href="#/sport/${escapeHtml(record.sportId)}">打开详情</a>
-        <button class="record-button" type="button" data-status="studying" data-record="${escapeHtml(record.id)}">继续学习</button>
-        <button class="record-button" type="button" data-status="mastered" data-record="${escapeHtml(record.id)}">标记已掌握</button>
+        <button class="record-button" type="button" data-status="studying" data-record="${escapeHtml(record.id)}">继续查看</button>
+        <button class="record-button" type="button" data-status="mastered" data-record="${escapeHtml(record.id)}">标记看完</button>
       </div>
     </article>
   `;
@@ -535,8 +722,8 @@ function renderEmptyState() {
 function renderEmptyRecords() {
   return `
     <div class="empty-state">
-      <h3>暂无学习记录</h3>
-      <p>进入任意项目详情页，点击“加入学习记录”后会显示在这里。</p>
+      <h3>暂无收藏</h3>
+      <p>进入任意项目详情页，点击“收藏赛事”后会显示在这里。</p>
       <a class="primary-link" href="#/category/all">去规则库</a>
     </div>
   `;
@@ -669,7 +856,7 @@ document.addEventListener("click", (event) => {
     const record = addRecord(sport);
     const status = document.querySelector("#save-status");
     if (status) {
-      status.textContent = `已保存“${record.sportTitle}”到学习记录`;
+      status.textContent = `已收藏“${record.sportTitle}”`;
     }
   }
 

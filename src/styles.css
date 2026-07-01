@@ -705,7 +705,7 @@ button:focus-visible {
 .category-dashboard {
   display: grid;
   gap: 22px;
-  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
   align-items: stretch;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -735,6 +735,21 @@ button:focus-visible {
   color: var(--muted);
   font-size: 16px;
   line-height: 1.8;
+}
+
+.dashboard-copy .hero-stats {
+  margin-top: 0;
+  grid-template-columns: 1fr;
+}
+
+.dashboard-copy .hero-stats span {
+  border-color: var(--line);
+  background: white;
+  color: var(--muted);
+}
+
+.dashboard-copy .hero-stats b {
+  color: #0f172a;
 }
 
 .hero {
@@ -889,23 +904,44 @@ button:focus-visible {
 }
 
 .category-grid-primary {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .category-card {
   display: grid;
-  min-height: 122px;
-  gap: 12px;
+  overflow: hidden;
+  min-height: 270px;
+  gap: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #f8fafc;
-  padding: 14px;
+  background: white;
+  padding: 0;
   color: inherit;
   text-decoration: none;
   transition:
     transform 160ms ease,
     border-color 160ms ease,
     box-shadow 160ms ease;
+}
+
+.category-cover {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.category-cover-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.category-cover-svg text {
+  font-family:
+    Inter, "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
 }
 
 .category-card:hover,
@@ -924,7 +960,7 @@ button:focus-visible {
 
 .category-card-main b {
   display: block;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .category-card-main small {
@@ -934,9 +970,13 @@ button:focus-visible {
   line-height: 1.6;
 }
 
+.category-card-main {
+  padding: 14px 14px 52px;
+}
+
 .category-card-main em {
   display: -webkit-box;
-  min-height: 42px;
+  min-height: 22px;
   margin-top: 10px;
   overflow: hidden;
   color: #334155;
@@ -949,13 +989,20 @@ button:focus-visible {
 }
 
 .category-card-count {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
   width: fit-content;
   border-radius: 999px;
-  background: white;
+  background: #ecfeff;
   padding: 6px 9px;
   color: var(--teal);
   font-size: 12px;
   font-weight: 900;
+}
+
+.category-card {
+  position: relative;
 }
 
 .page-grid {
