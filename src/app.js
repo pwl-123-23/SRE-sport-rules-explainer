@@ -1,3 +1,4 @@
+(() => {
 const { categories, sports } = window.SPORTS_RULES_DATA;
 
 const STORAGE_KEY = "sports-rules-app-records";
@@ -684,3 +685,4 @@ document.addEventListener("click", (event) => {
 
 window.addEventListener("hashchange", render);
 render();
+})();
