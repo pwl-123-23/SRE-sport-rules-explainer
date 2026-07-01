@@ -128,6 +128,102 @@ function filteredSports(categoryId = "all") {
   });
 }
 
+function sportsForCategory(categoryId) {
+  return sports.filter((sport) => sport.category === categoryId);
+}
+
+function sampleSports(categoryId) {
+  return sportsForCategory(categoryId)
+    .slice(0, 4)
+    .map((sport) => sport.title)
+    .join(" / ");
+}
+
+function buildCanvaPrompt(sport) {
+  const category = categoryById.get(sport.category);
+  return `为体育赛事规则APP设计一张${sport.title}赛事图卡，16:9横版，中文标题“${sport.title}”，小标签“${category?.label ?? sport.category}”，画面突出${sport.venue}，加入规则关键词：赛制、得分、常见判罚。风格：清晰教育型、扁平矢量、色彩明快、适合小程序和网页卡片，避免复杂背景和密集文字。`;
+}
+
+function renderSportPoster(sport) {
+  const category = categoryById.get(sport.category);
+  const categoryLabel = escapeHtml(category?.label ?? sport.category);
+  const categoryColor = escapeHtml(category?.color ?? sport.accent);
+  const accent = escapeHtml(sport.accent);
+  const title = escapeHtml(sport.title);
+  const englishName = escapeHtml(sport.englishName);
+  const shortRule = escapeHtml(sport.scoring.split("，")[0]);
+  const gradientId = `poster-${escapeHtml(sport.id)}`;
+
+  return `
+    <svg class="poster-svg" viewBox="0 0 640 360" role="img" aria-label="${title}赛事图卡">
+      <title>${title}赛事图卡</title>
+      <defs>
+        <linearGradient id="${gradientId}" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="#ffffff" />
+          <stop offset="1" stop-color="#eef7ff" />
+        </linearGradient>
+      </defs>
+      <rect width="640" height="360" rx="22" fill="url(#${gradientId})" />
+      <rect x="0" y="0" width="14" height="360" fill="${categoryColor}" />
+      <circle cx="524" cy="70" r="112" fill="${accent}" opacity="0.12" />
+      <circle cx="575" cy="300" r="92" fill="${categoryColor}" opacity="0.12" />
+      <rect x="38" y="34" width="132" height="36" rx="18" fill="${categoryColor}" opacity="0.14" />
+      <text x="104" y="57" fill="${categoryColor}" text-anchor="middle" font-size="18" font-weight="800">${categoryLabel}</text>
+      <text x="38" y="132" fill="#111827" font-size="58" font-weight="900">${title}</text>
+      <text x="41" y="170" fill="#64748b" font-size="22" font-weight="800">${englishName}</text>
+      <text x="40" y="302" fill="#334155" font-size="21" font-weight="800">规则图卡 · ${shortRule}</text>
+      <g transform="translate(344 92)">
+        ${renderPosterSymbol(sport.visualType, accent, categoryColor)}
+      </g>
+    </svg>
+  `;
+}
+
+function renderPosterSymbol(type, accent, categoryColor) {
+  if (["field", "court", "netCourt"].includes(type)) {
+    const net = type === "netCourt" ? '<path d="M122 26v166" stroke="#111827" stroke-width="5" opacity=".72"/>' : "";
+    return `<rect x="0" y="0" width="244" height="190" rx="18" fill="${accent}" opacity=".82"/><rect x="18" y="20" width="208" height="150" rx="10" fill="none" stroke="#fff" stroke-width="7"/><path d="M122 20v150M18 95h208" stroke="#fff" stroke-width="5" opacity=".9"/><circle cx="122" cy="95" r="35" fill="none" stroke="#fff" stroke-width="5" opacity=".92"/>${net}<circle cx="172" cy="72" r="19" fill="#fff"/><circle cx="172" cy="72" r="9" fill="${categoryColor}"/>`;
+  }
+
+  if (type === "table") {
+    return `<path d="M28 36h190l25 118H3z" fill="${accent}" opacity=".88"/><path d="M122 36v118M8 95h230" stroke="#fff" stroke-width="7"/><circle cx="183" cy="65" r="15" fill="#fff"/><path d="M178 150h-36M103 150H66" stroke="#111827" stroke-width="8" opacity=".28" stroke-linecap="round"/>`;
+  }
+
+  if (type === "diamond") {
+    return `<path d="M122 8 230 99 122 184 14 99z" fill="#f3c77a"/><path d="M122 42 188 99 122 154 56 99z" fill="${accent}" opacity=".72"/><path d="M122 154 56 99 122 42 188 99z" fill="none" stroke="#fff" stroke-width="7"/><circle cx="122" cy="154" r="12" fill="#fff"/><circle cx="56" cy="99" r="12" fill="#fff"/><circle cx="122" cy="42" r="12" fill="#fff"/><circle cx="188" cy="99" r="12" fill="#fff"/>`;
+  }
+
+  if (["track", "hurdles", "relay", "road", "raceTrack"].includes(type)) {
+    const hurdles = type === "hurdles" ? '<path d="M72 60v70M112 50v80M152 46v84" stroke="#fff" stroke-width="8" stroke-linecap="round"/>' : "";
+    const baton = type === "relay" ? '<path d="M70 63h58M116 127h58" stroke="#fde047" stroke-width="12" stroke-linecap="round"/>' : "";
+    return `<rect x="0" y="14" width="244" height="160" rx="80" fill="${accent}" opacity=".86"/><rect x="48" y="53" width="148" height="82" rx="41" fill="#f8fafc"/><path d="M48 39h148M48 68h148M48 96h148M48 124h148M48 153h148" stroke="#fff" stroke-width="4" opacity=".82"/>${hurdles}${baton}<circle cx="66" cy="95" r="15" fill="${categoryColor}"/>`;
+  }
+
+  if (["jump", "throw"].includes(type)) {
+    return `<path d="M16 144h210" stroke="#94a3b8" stroke-width="18" stroke-linecap="round"/><path d="M44 108c50-62 117-70 169-15" fill="none" stroke="${accent}" stroke-width="12" stroke-linecap="round"/><circle cx="56" cy="110" r="18" fill="${categoryColor}"/><path d="M156 46l60 28" stroke="#111827" stroke-width="8" opacity=".18" stroke-linecap="round"/>`;
+  }
+
+  if (["pool", "stagePool", "laneWater", "diving"].includes(type)) {
+    const platform = type === "diving" ? '<path d="M34 25h112" stroke="#475569" stroke-width="12" stroke-linecap="round"/><path d="M42 31v78" stroke="#475569" stroke-width="10"/>' : "";
+    return `<rect x="0" y="18" width="244" height="154" rx="18" fill="#38bdf8"/><path d="M18 54c32 12 50-12 82 0s50 12 82 0 38-10 48-3M18 98c32 12 50-12 82 0s50 12 82 0 38-10 48-3M18 140c32 12 50-12 82 0s50 12 82 0 38-10 48-3" fill="none" stroke="#e0f2fe" stroke-width="7" stroke-linecap="round"/>${platform}<circle cx="142" cy="88" r="16" fill="${categoryColor}"/>`;
+  }
+
+  if (["slope", "iceTrack", "rink", "iceOval", "curling"].includes(type)) {
+    const house = type === "curling" ? '<circle cx="174" cy="97" r="39" fill="#ef4444"/><circle cx="174" cy="97" r="25" fill="#fff"/><circle cx="174" cy="97" r="12" fill="#2563eb"/>' : '<path d="M122 30v130M54 95h136" stroke="#bfdbfe" stroke-width="6"/>';
+    return `<rect x="0" y="16" width="244" height="158" rx="79" fill="#f8fafc" stroke="#93c5fd" stroke-width="8"/><path d="M34 40h120L73 174H8z" fill="${accent}" opacity=".14"/>${house}<circle cx="72" cy="96" r="16" fill="${categoryColor}"/>`;
+  }
+
+  if (["ring", "mat", "piste"].includes(type)) {
+    return `<rect x="14" y="24" width="216" height="140" rx="${type === "piste" ? "16" : "70"}" fill="#fff" stroke="${accent}" stroke-width="10"/><circle cx="98" cy="94" r="20" fill="${categoryColor}"/><circle cx="148" cy="94" r="20" fill="#2563eb"/><path d="M65 94h115" stroke="#111827" stroke-width="6" opacity=".18" stroke-linecap="round"/>`;
+  }
+
+  if (type === "stage") {
+    return `<rect x="26" y="24" width="192" height="140" rx="16" fill="#fff" stroke="${accent}" stroke-width="8"/><path d="M70 128c35-70 70-70 105 0" fill="none" stroke="${categoryColor}" stroke-width="12" stroke-linecap="round"/><circle cx="122" cy="70" r="22" fill="${accent}"/>`;
+  }
+
+  return `<circle cx="122" cy="95" r="78" fill="${accent}" opacity=".2"/><circle cx="122" cy="95" r="30" fill="${categoryColor}"/>`;
+}
+
 function render() {
   normalizeRoute();
   setActiveNav();
@@ -159,37 +255,18 @@ function renderHomePage() {
     .filter(Boolean);
 
   app.innerHTML = `
-    <section class="hero">
-      <div class="hero-copy">
+    <section class="category-dashboard">
+      <div class="dashboard-copy">
         <p class="eyebrow">SPORT RULES EXPLAINER</p>
-        <h2>体育赛事规则学习平台</h2>
-        <p>
-          按球类、田径、水上、冰雪、格斗、技巧评分和竞速七大类组织规则。
-          点击分类进入项目列表，点击项目进入完整规则详情页。
-        </p>
-        <div class="hero-actions">
-          <a class="primary-link" href="#/category/all">进入规则库</a>
-          <a class="secondary-link" href="#/records">查看学习记录</a>
-        </div>
+        <h2>先选赛事大类，再进入项目规则</h2>
+        <p>每个类别都可以点开查看细分项目，每个项目都有赛事图卡、赛制、场地器材、得分胜负、常见判罚和观赛重点。</p>
         <div class="hero-stats">
-          <span><b>7</b>赛事大类</span>
-          <span><b>44</b>分类条目</span>
+          <span><b>7</b>大类</span>
+          <span><b>44</b>项目</span>
           <span><b>5</b>规则维度</span>
         </div>
       </div>
-      <div class="hero-stage">
-        ${featured.slice(0, 4).map((sport) => `<div class="hero-tile">${renderVisual(sport)}</div>`).join("")}
-      </div>
-    </section>
-
-    <section class="section-block">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">赛事分类</p>
-          <h2>选择一个类别开始</h2>
-        </div>
-      </div>
-      <div class="category-grid">
+      <div class="category-grid category-grid-primary">
         ${categoriesWithoutAll.map(renderCategoryCard).join("")}
       </div>
     </section>
@@ -198,7 +275,7 @@ function renderHomePage() {
       <div class="section-head">
         <div>
           <p class="eyebrow">推荐项目</p>
-          <h2>先看这些高频赛事</h2>
+          <h2>先看这些赛事图卡</h2>
         </div>
         <a class="text-link" href="#/category/all">全部项目</a>
       </div>
@@ -206,11 +283,21 @@ function renderHomePage() {
         ${featured.map(renderSportCard).join("")}
       </div>
     </section>
+
+    <section class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">学习记录</p>
+          <h2>复习已经保存的项目</h2>
+        </div>
+        <a class="primary-link" href="#/records">查看学习记录</a>
+      </div>
+    </section>
   `;
 }
 
 function renderCategoryCard(category) {
-  const count = sports.filter((sport) => sport.category === category.id).length;
+  const count = sportsForCategory(category.id).length;
 
   return `
     <a class="category-card" href="#/category/${escapeHtml(category.id)}">
@@ -218,6 +305,7 @@ function renderCategoryCard(category) {
       <span class="category-card-main">
         <b>${escapeHtml(category.label)}</b>
         <small>${escapeHtml(category.description)}</small>
+        <em>${escapeHtml(sampleSports(category.id))}</em>
       </span>
       <span class="category-card-count">${count}项</span>
     </a>
@@ -259,9 +347,10 @@ function renderCategoryPage(categoryId) {
           <div>
             <p class="eyebrow">赛事规则库</p>
             <h2>${escapeHtml(category.label)}</h2>
+            <p class="content-desc">${escapeHtml(category.description)}</p>
           </div>
           <div class="result-meta">
-            <span>${list.length}</span>
+            <span data-result-count>${list.length}</span>
             <span>个项目</span>
           </div>
         </div>
@@ -272,9 +361,6 @@ function renderCategoryPage(categoryId) {
     </div>
   `;
 
-  const input = document.querySelector("#search-input");
-  input?.focus();
-  input?.setSelectionRange(input.value.length, input.value.length);
 }
 
 function renderCategoryButton(category, activeId) {
@@ -296,7 +382,7 @@ function renderSportCard(sport) {
 
   return `
     <article class="sport-card">
-      <a class="visual" href="#/sport/${escapeHtml(sport.id)}">${renderVisual(sport)}</a>
+      <a class="visual" href="#/sport/${escapeHtml(sport.id)}">${renderSportPoster(sport)}</a>
       <div class="sport-body">
         <div class="sport-meta">
           <span class="pill">${escapeHtml(category?.label ?? sport.category)}</span>
@@ -336,7 +422,7 @@ function renderSportPage(sportId) {
     <section class="detail-layout">
       <aside class="detail-side">
         <a class="text-link" href="#/category/${escapeHtml(sport.category)}">返回${escapeHtml(category?.label ?? "分类")}</a>
-        <div class="detail-visual">${renderVisual(sport)}</div>
+        <div class="detail-visual">${renderSportPoster(sport)}</div>
         <button class="primary-button" type="button" data-save="${escapeHtml(sport.id)}">加入学习记录</button>
         <label class="toggle-row">
           <span>大字模式</span>
@@ -357,6 +443,7 @@ function renderSportPage(sportId) {
           ${renderRuleSection("得分胜负", sport.scoring)}
           ${renderRuleSection("常见判罚", sport.fouls)}
           ${renderRuleSection("观赛重点", sport.watchFocus)}
+          ${renderRuleSection("Canva图卡提示", buildCanvaPrompt(sport))}
         </div>
 
         <section class="related-section">
@@ -387,7 +474,7 @@ function renderRuleSection(title, body) {
 function renderCompactSport(sport) {
   return `
     <a class="compact-card" href="#/sport/${escapeHtml(sport.id)}">
-      <span>${renderVisual(sport)}</span>
+      <span>${renderSportPoster(sport)}</span>
       <b>${escapeHtml(sport.title)}</b>
       <small>${escapeHtml(sport.summary)}</small>
     </a>
@@ -552,7 +639,15 @@ document.addEventListener("input", (event) => {
   const route = currentRoute();
   const parts = route.split("/").filter(Boolean);
   if (parts[0] === "category") {
-    renderCategoryPage(parts[1] || "all");
+    const list = filteredSports(parts[1] || "all");
+    const grid = document.querySelector("#sport-grid");
+    const count = document.querySelector("[data-result-count]");
+    if (grid) {
+      grid.innerHTML = list.length ? list.map(renderSportCard).join("") : renderEmptyState();
+    }
+    if (count) {
+      count.textContent = String(list.length);
+    }
   }
 });
 

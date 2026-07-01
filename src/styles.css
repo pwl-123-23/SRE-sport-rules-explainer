@@ -284,6 +284,13 @@ button:focus-visible {
   line-height: 1.2;
 }
 
+.content-desc {
+  max-width: 680px;
+  margin: 7px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 .result-meta {
   display: inline-flex;
   align-items: baseline;
@@ -332,6 +339,19 @@ button:focus-visible {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.poster-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.poster-svg text {
+  font-family:
+    Inter, "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
 }
 
 .sport-body {
@@ -682,6 +702,41 @@ button:focus-visible {
   padding: 22px clamp(16px, 3vw, 36px) 36px;
 }
 
+.category-dashboard {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  padding: clamp(18px, 3vw, 28px);
+  box-shadow: var(--shadow);
+}
+
+.dashboard-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 20px;
+}
+
+.dashboard-copy h2 {
+  margin: 4px 0 0;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.1;
+}
+
+.dashboard-copy p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
 .hero {
   display: grid;
   min-height: 430px;
@@ -833,6 +888,10 @@ button:focus-visible {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.category-grid-primary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .category-card {
   display: grid;
   min-height: 122px;
@@ -873,6 +932,20 @@ button:focus-visible {
   margin-top: 6px;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.category-card-main em {
+  display: -webkit-box;
+  min-height: 42px;
+  margin-top: 10px;
+  overflow: hidden;
+  color: #334155;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .category-card-count {
@@ -942,6 +1015,11 @@ button:focus-visible {
 .detail-visual svg {
   display: block;
   width: 100%;
+  height: auto;
+}
+
+.detail-visual .poster-svg {
+  aspect-ratio: 16 / 9;
   height: auto;
 }
 
@@ -1039,6 +1117,7 @@ button:focus-visible {
 
 @media (max-width: 1100px) {
   .hero,
+  .category-dashboard,
   .page-grid,
   .detail-layout {
     grid-template-columns: 1fr;
@@ -1055,6 +1134,24 @@ button:focus-visible {
 }
 
 @media (max-width: 720px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+
+  .brand h1 {
+    font-size: 18px;
+  }
+
+  .topnav {
+    width: 100%;
+  }
+
+  .nav-button {
+    flex: 1;
+    padding: 0 8px;
+    text-align: center;
+  }
+
   .app-shell {
     padding: 16px;
   }
